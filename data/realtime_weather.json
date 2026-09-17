@@ -1,0 +1,46 @@
+{
+  "Balaghat Mine (Central Sector)": {
+    "temperature": 27.6,
+    "humidity": 82,
+    "precipitation_mm_hr": 0.1,
+    "rain_mm_hr": 0.0,
+    "wind_speed_kmh": 8.0,
+    "soil_moisture_pct": 32.0,
+    "condition": "Light Rain",
+    "status": "Success (Live Open-Meteo Station Feed)",
+    "recorded_at": "2026-09-12 10:03:32"
+  },
+  "Mansar Mine (Western Sector)": {
+    "temperature": 28.2,
+    "humidity": 78,
+    "precipitation_mm_hr": 0.1,
+    "rain_mm_hr": 0.1,
+    "wind_speed_kmh": 7.7,
+    "soil_moisture_pct": 32.0,
+    "condition": "Light Rain",
+    "status": "Success (Live Open-Meteo Station Feed)",
+    "recorded_at": "2026-09-12 10:03:32"
+  },
+  "Dongri Buzurg Mine (Bhandara Sector)": {
+    "temperature": 26.4,
+    "humidity": 86,
+    "precipitation_mm_hr": 1.1,
+    "rain_mm_hr": 0.0,
+    "wind_speed_kmh": 11.3,
+    "soil_moisture_pct": 32.0,
+    "condition": "Light Rain",
+    "status": "Success (Live Open-Meteo Station Feed)",
+    "recorded_at": "2026-09-12 10:03:32"
+  },
+  "Ukwa Mine (Eastern Sector)": {
+    "temperature": 23.8,
+    "humidity": 95,
+    "precipitation_mm_hr": 0.3,
+    "rain_mm_hr": 0.1,
+    "wind_speed_kmh": 14.9,
+    "soil_moisture_pct": 32.0,
+    "condition": "Light Rain",
+    "status": "Success (Live Open-Meteo Station Feed)",
+    "recorded_at": "2026-09-12 10:03:32"
+  }
+}

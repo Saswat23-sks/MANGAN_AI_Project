@@ -1,0 +1,7 @@
+# Core Backend & Execution Engine
+# The core MANGAN AI server, database manager, and automated tests run on the Python 3.10+ Standard Library.
+# Optional dependencies for extending ML models and data science pipelines:
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+requests>=2.31.0

@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MANGAN AI — MOIL Manganese Reserve & Production Intelligence Platform</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet GIS CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="styles.css?v=20260912_v4" />
+</head>
+<body class="bg-dark">
+
+    <!-- ===================================================================
+         CINEMATIC EXCAVATOR MOUNTAIN DIGGING OPENING ANIMATION (#miningPreloader)
+         =================================================================== -->
+    <div id="miningPreloader" class="mining-preloader fixed inset-0 z-[99999] flex flex-col items-center justify-between overflow-hidden select-none">
+        <!-- Ambient Sky & Stars -->
+        <div class="preloader-sky absolute inset-0"></div>
+        <div class="preloader-stars absolute inset-0"></div>
+
+        <!-- Top HUD Header -->
+        <div class="preloader-hud-top w-full max-w-7xl px-8 pt-6 flex justify-between items-center z-30">
+            <div class="flex items-center gap-3">
+                <div>
+                    <h2 class="text-base font-extrabold text-white tracking-wider font-heading flex items-center gap-2">
+                        MANGAN AI <span class="text-3xs font-mono uppercase bg-cyan-500/20 text-cyan px-2 py-0.5 rounded border border-cyan-500/30">MOIL Edition</span>
+                    </h2>
+                    <p class="text-xs text-gray-300 font-sans">Smart Manganese Exploration & Daily Pit Operations Assistant</p>
+                </div>
+            </div>
+            <button id="skipIntroBtn" onclick="dismissMiningPreloader()" class="px-3.5 py-1.5 rounded-full bg-slate-800/80 hover:bg-slate-700/90 border border-white/20 text-gray-300 hover:text-white text-xs font-semibold backdrop-blur transition flex items-center gap-2 shadow-lg">
+                <span>Skip Intro</span> <i class="fa-solid fa-forward-step text-2xs text-cyan"></i>
+            </button>
+        </div>
+
+        <!-- Center Cinematic Scene: Mountains & Excavator Digging -->
+        <div class="preloader-scene-container relative w-full flex-1 flex items-center justify-center overflow-hidden" id="sceneContainer">
+            
+            <!-- Left Mountain Gate (Parts left upon strike) -->
+            <div class="mountain-gate mountain-left absolute top-0 left-0 w-[55%] h-full z-10" id="mountainLeft">
+                <svg viewBox="0 0 700 800" class="w-full h-full preserve-3d" preserveAspectRatio="none">
+                    <!-- Layered Dark Rocky Peak -->
+                    <polygon points="0,0 450,0 600,280 520,450 680,620 540,800 0,800" fill="#0f172a" />
+                    <polygon points="0,50 380,0 520,260 460,430 580,600 480,800 0,800" fill="#1e293b" opacity="0.85" />
+                    <polygon points="0,150 300,80 430,280 390,460 490,620 410,800 0,800" fill="#334155" opacity="0.5" />
+                    <!-- Glowing Manganese Ore Veins (Cyan & Purple Luminescence) -->
+                    <path class="fissure-line" d="M 120,40 Q 280,180 380,310 T 520,480 T 580,680" fill="none" stroke="#06b6d4" stroke-width="4" opacity="0.9" />
+                    <path class="fissure-line" d="M 220,120 Q 340,240 420,380 T 480,560" fill="none" stroke="#a855f7" stroke-width="3" opacity="0.8" />
+                    <path class="fissure-line" d="M 80,260 Q 200,340 320,460 T 440,650" fill="none" stroke="#38bdf8" stroke-width="2.5" opacity="0.75" />
+                </svg>
+            </div>
+
+            <!-- Right Mountain Gate (Parts right upon strike) -->
+            <div class="mountain-gate mountain-right absolute top-0 right-0 w-[55%] h-full z-10" id="mountainRight">
+                <svg viewBox="0 0 700 800" class="w-full h-full preserve-3d" preserveAspectRatio="none">
+                    <!-- Layered Dark Rocky Cliff -->
+                    <polygon points="250,0 700,0 700,800 160,800 280,620 180,450 320,280" fill="#0b1120" />
+                    <polygon points="320,0 700,0 700,800 220,800 340,600 240,430 380,260" fill="#1e293b" opacity="0.9" />
+                    <polygon points="400,80 700,150 700,800 290,800 390,620 310,460 440,280" fill="#334155" opacity="0.5" />
+                    <!-- Glowing Manganese Ore Veins -->
+                    <path class="fissure-line" d="M 580,40 Q 420,180 320,310 T 180,480 T 120,680" fill="none" stroke="#06b6d4" stroke-width="4" opacity="0.9" />
+                    <path class="fissure-line" d="M 480,120 Q 360,240 280,380 T 220,560" fill="none" stroke="#a855f7" stroke-width="3" opacity="0.8" />
+                    <path class="fissure-line" d="M 620,260 Q 500,340 380,460 T 260,650" fill="none" stroke="#38bdf8" stroke-width="2.5" opacity="0.75" />
+                </svg>
+            </div>
+
+            <!-- Glowing Portal Core (Revealed when mountain cracks open) -->
+            <div class="portal-light-core absolute z-5 w-96 h-96 rounded-full bg-cyan-500/30 blur-3xl opacity-0 transition-opacity duration-700 pointer-events-none" id="portalLight"></div>
+
+            <!-- Heavy Mining Excavator Unit Driving & Digging -->
+            <div class="excavator-actor-wrapper z-20 absolute" id="excavatorActor">
+                <svg width="480" height="300" viewBox="0 0 520 320" class="overflow-visible filter drop-shadow-2xl">
+                    <!-- Projector Searchlight Cone shining onto rock cliff -->
+                    <polygon points="235,175 490,90 510,250 235,185" fill="url(#floodlightGrad)" opacity="0.45" />
+
+                    <!-- Caterpillar Track Assembly -->
+                    <g class="excavator-tracks">
+                        <!-- Lower Track Body -->
+                        <rect x="70" y="240" width="170" height="42" rx="20" fill="#0f172a" stroke="#475569" stroke-width="3" />
+                        <!-- Tread Marks -->
+                        <line x1="85" y1="240" x2="85" y2="282" stroke="#334155" stroke-width="3" />
+                        <line x1="110" y1="240" x2="110" y2="282" stroke="#334155" stroke-width="3" />
+                        <line x1="135" y1="240" x2="135" y2="282" stroke="#334155" stroke-width="3" />
+                        <line x1="160" y1="240" x2="160" y2="282" stroke="#334155" stroke-width="3" />
+                        <line x1="185" y1="240" x2="185" y2="282" stroke="#334155" stroke-width="3" />
+                        <line x1="210" y1="240" x2="210" y2="282" stroke="#334155" stroke-width="3" />
+                        <!-- Rotating Sprocket Wheels -->
+                        <circle cx="95" cy="261" r="14" fill="#1e293b" stroke="#06b6d4" stroke-width="2" class="track-wheel" />
+                        <circle cx="155" cy="261" r="14" fill="#1e293b" stroke="#94a3b8" stroke-width="2" class="track-wheel" />
+                        <circle cx="215" cy="261" r="14" fill="#1e293b" stroke="#06b6d4" stroke-width="2" class="track-wheel" />
+                        <!-- Track Mudguard -->
+                        <path d="M 60,240 Q 155,230 245,240" fill="none" stroke="#eab308" stroke-width="5" />
+                    </g>
+
+                    <!-- Dust Puffs under rear tracks -->
+                    <g class="dust-particles">
+                        <circle cx="55" cy="275" r="8" fill="#64748b" opacity="0.6" class="dust-particle" />
+                        <circle cx="45" cy="265" r="12" fill="#94a3b8" opacity="0.4" class="dust-particle" style="animation-delay: 0.3s;" />
+                        <circle cx="35" cy="280" r="6" fill="#cbd5e1" opacity="0.5" class="dust-particle" style="animation-delay: 0.6s;" />
+                    </g>
+
+                    <!-- Excavator Superstructure / Turntable -->
+                    <g class="excavator-cab">
+                        <!-- Counterweight -->
+                        <rect x="75" y="175" width="45" height="65" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2" />
+                        <!-- Main Heavy Engine Body (MOIL Yellow / Dark Charcoal) -->
+                        <path d="M 115,170 L 210,170 L 225,195 L 225,240 L 115,240 Z" fill="#eab308" stroke="#ca8a04" stroke-width="2" />
+                        <text x="125" y="210" fill="#0f172a" font-size="11" font-weight="800" font-family="sans-serif">MOIL-EX</text>
+                        <!-- Operator Cabin with Glass Windows -->
+                        <path d="M 180,145 L 225,145 L 240,185 L 240,235 L 180,235 Z" fill="#0f172a" stroke="#38bdf8" stroke-width="2" />
+                        <polygon points="188,155 220,155 232,185 188,185" fill="#38bdf8" opacity="0.6" />
+                        <!-- Floodlight Housing -->
+                        <circle cx="235" cy="180" r="5" fill="#ffffff" stroke="#0284c7" stroke-width="2" />
+                    </g>
+
+                    <!-- Articulated Hydraulic Boom, Arm and Bucket -->
+                    <g class="excavator-boom">
+                        <!-- Main Boom -->
+                        <path d="M 180,235 L 320,135 L 335,145 L 205,245 Z" fill="#ca8a04" stroke="#eab308" stroke-width="2" />
+                        <circle cx="180" cy="240" r="7" fill="#0f172a" stroke="#cbd5e1" stroke-width="2" />
+                        <!-- Hydraulic Piston Cylinder -->
+                        <line x1="200" y1="210" x2="275" y2="160" stroke="#94a3b8" stroke-width="5" />
+                        <line x1="220" y1="195" x2="265" y2="165" stroke="#06b6d4" stroke-width="3" />
+
+                        <!-- Dipper Stick Arm -->
+                        <g class="excavator-stick">
+                            <path d="M 320,135 L 425,215 L 435,205 L 330,125 Z" fill="#eab308" stroke="#a16207" stroke-width="2" />
+                            <circle cx="320" cy="140" r="6" fill="#0f172a" stroke="#cbd5e1" stroke-width="2" />
+                            
+                            <!-- Manganese Digging Bucket -->
+                            <g class="excavator-bucket">
+                                <circle cx="430" cy="210" r="6" fill="#0f172a" stroke="#cbd5e1" stroke-width="2" />
+                                <!-- Heavy Steel Bucket Body -->
+                                <path d="M 430,210 Q 470,200 480,240 L 460,265 L 415,245 Z" fill="#334155" stroke="#64748b" stroke-width="2" />
+                                <!-- Hardened Ripper Teeth -->
+                                <polygon points="480,240 495,243 488,248" fill="#06b6d4" />
+                                <polygon points="475,248 490,252 482,256" fill="#06b6d4" />
+                                <polygon points="468,255 483,260 475,263" fill="#06b6d4" />
+                            </g>
+                        </g>
+                    </g>
+
+                    <defs>
+                        <linearGradient id="floodlightGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.8" />
+                            <stop offset="60%" stop-color="#06b6d4" stop-opacity="0.3" />
+                            <stop offset="100%" stop-color="#06b6d4" stop-opacity="0" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <!-- Exploding Ore Sparks & Dust Cloud on Bucket Strike -->
+            <div class="impact-burst-layer absolute z-30 pointer-events-none" id="impactBurst" style="left: 50%; top: 54%;">
+                <!-- Dynamic SVG Sparks Burst -->
+                <svg width="220" height="220" viewBox="-110 -110 220 220" class="overflow-visible">
+                    <circle cx="0" cy="0" r="16" fill="#ffffff" class="ore-spark" style="--dx: 0px; --dy: 0px;" />
+                    <polygon points="-8,-6 8,-4 4,8 -6,6" fill="#06b6d4" class="ore-spark" style="--dx: 70px; --dy: -60px;" />
+                    <polygon points="-6,-4 6,-6 5,6 -4,5" fill="#a855f7" class="ore-spark" style="--dx: -80px; --dy: -50px;" />
+                    <polygon points="-5,-5 5,-3 3,5 -5,4" fill="#38bdf8" class="ore-spark" style="--dx: 90px; --dy: 30px;" />
+                    <polygon points="-7,-5 7,-3 4,7 -5,6" fill="#eab308" class="ore-spark" style="--dx: -60px; --dy: 70px;" />
+                    <circle cx="0" cy="0" r="4" fill="#38bdf8" class="ore-spark" style="--dx: 110px; --dy: -20px;" />
+                    <circle cx="0" cy="0" r="5" fill="#ffffff" class="ore-spark" style="--dx: -100px; --dy: 10px;" />
+                    <circle cx="0" cy="0" r="3" fill="#a855f7" class="ore-spark" style="--dx: 40px; --dy: -90px;" />
+                </svg>
+            </div>
+
+        </div>
+
+        <!-- Bottom Telemetry HUD & Status Bar -->
+        <div class="preloader-hud-bottom w-full max-w-xl px-6 pb-8 z-30 text-center">
+            <div class="flex justify-between items-center text-xs text-gray-300 font-mono mb-2">
+                <span id="preloaderPhaseText" class="flex items-center gap-2 text-cyan font-bold">
+                    <i class="fa-solid fa-gears animate-spin text-2xs"></i> Excavating Balaghat Manganese Strata...
+                </span>
+                <span id="preloaderPercent" class="font-bold text-white font-mono">15%</span>
+            </div>
+            <div class="h-2 w-full bg-slate-900/90 rounded-full border border-white/15 overflow-hidden p-0.5 shadow-inner">
+                <div id="preloaderBar" class="h-full rounded-full bg-gradient-to-r from-cyan-500 via-teal-400 to-emerald-400 transition-all duration-200" style="width: 15%;"></div>
+            </div>
+            <div class="mt-3 flex justify-center items-center gap-3 text-3xs text-gray-400 font-mono">
+                <span><i class="fa-solid fa-satellite text-cyan"></i> Sentinel-2 Pipeline</span>
+                <span class="text-gray-600">&bull;</span>
+                <span><i class="fa-solid fa-cloud-rain text-amber"></i> AWS Weather Telemetry</span>
+                <span class="text-gray-600">&bull;</span>
+                <span><i class="fa-solid fa-microchip text-purple"></i> Spatial ML Ensemble</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         TOP TWO-TIER NAVIGATION BAR
+         =================================================================== -->
+    <header class="navbar navbar-dark shadow-2xl">
+        <!-- Tier 1: Brand, Live Station Telemetry & User Controls -->
+        <div class="nav-container-top flex items-center justify-between pb-2.5 mb-2.5 border-b border-white/10 flex-wrap gap-3">
+            
+            <!-- Brand (Clean, friendly typography without redundant logo) -->
+            <div class="brand flex items-center gap-2">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="brand-title font-heading tracking-wide">MANGAN AI</h1>
+                        <span class="badge badge-cyan text-3xs font-mono font-bold tracking-wider">v1.4 PROD</span>
+                    </div>
+                    <p class="brand-subtitle text-xs text-gray-400">Smart Manganese Exploration & Pit Planning Assistant</p>
+                </div>
+            </div>
+            
+            <!-- Live Station Telemetry Chip (Clean & Streamlined) -->
+            <div class="weather-ticker-card shadow-sm" id="weatherTicker">
+                <div class="weather-icon-box"><i class="fa-solid fa-cloud-sun-rain text-cyan"></i></div>
+                <div class="weather-text flex items-center gap-2 text-xs">
+                    <select id="weatherStationSelect" class="bg-slate-800/90 text-xs text-gray-200 border border-white/15 rounded-lg px-2.5 py-1 font-semibold focus:outline-none focus:border-cyan" onchange="fetchWeatherData(this.value)">
+                        <option value="Balaghat Mine (Central Sector)">📍 Balaghat Mine AWS (Central)</option>
+                        <option value="Mansar Mine (Western Sector)">📍 Mansar Mine AWS (West)</option>
+                        <option value="Dongri Buzurg Mine (Bhandara Sector)">📍 Dongri Buzurg Mine AWS</option>
+                        <option value="Ukwa Mine (Eastern Sector)">📍 Ukwa Mine AWS (East)</option>
+                    </select>
+                    <span class="weather-val font-bold text-cyan" id="weatherTemp">24.8°C</span>
+                    <span class="text-gray-500">|</span>
+                    <span class="weather-val font-bold text-amber" id="weatherRain">Rain: 0.1 mm/hr</span>
+                    <button class="btn-xs bg-cyan-500/20 text-cyan hover:bg-cyan-500/40 border border-cyan-500/30 px-2 py-1 rounded text-2xs font-bold transition flex items-center gap-1" onclick="fetchWeatherData(document.getElementById('weatherStationSelect').value, true)" title="Fetch Live Station Telemetry and write to DB">
+                        <i class="fa-solid fa-arrows-rotate" id="weatherRefreshSpinner"></i> Sync
+                    </button>
+                    <span class="badge badge-success text-3xs" id="weatherBadge"><i class="fa-solid fa-circle text-emerald animate-pulse text-3xs"></i> OPEN-METEO ➔ DB</span>
+                </div>
+            </div>
+
+            <!-- Header Quick Actions: Alerts, Role Profile, Replay Intro & Theme -->
+            <div class="header-user-controls flex items-center gap-2.5">
+                <!-- Replay Mountain Dig Opening Animation -->
+                <button class="replay-intro-btn flex items-center gap-1.5 bg-slate-800/80 hover:bg-cyan-500/20 text-gray-300 hover:text-cyan border border-white/10 hover:border-cyan/40 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition shadow-sm" onclick="replayMiningIntro()" title="Replay Excavator Mountain Dig Opening Animation">
+                    <i class="fa-solid fa-mountain text-amber text-xs"></i> <span>Intro Dig</span>
+                </button>
+
+                <!-- Alerts Button Counter -->
+                <button id="alertsBtn" class="alert-trigger-btn flex items-center gap-1.5 bg-red-500/15 text-red-400 border border-red-500/35 px-3 py-1.5 rounded-full text-xs font-bold hover:bg-red-500/25 transition shadow-sm" onclick="toggleAlertsDrawer()" title="View Active Mining Alerts">
+                    <i class="fa-solid fa-bell animate-bounce text-xs"></i> 
+                    <span id="activeAlertsCount">4</span> ALERTS
+                </button>
+
+                <!-- User Role Badge & Switcher Trigger -->
+                <div id="userProfileBtn" class="user-role-badge flex items-center gap-2 bg-slate-800/90 border border-white/15 px-3 py-1.5 rounded-lg text-xs cursor-pointer hover:border-cyan transition shadow-sm" onclick="openLoginModal()" title="Switch Operational Role or Login">
+                    <div class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan flex items-center justify-center font-bold text-2xs border border-cyan-500/30" id="userAvatar">AD</div>
+                    <div class="text-left leading-tight">
+                        <span class="font-bold text-white block text-xs" id="navUserName">Admin (CMD)</span>
+                        <span class="text-[10px] text-cyan block font-semibold" id="navUserRole">Admin (Active)</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[10px] text-gray-400 ml-1"></i>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button class="theme-toggle-btn text-gray-400 hover:text-cyan p-1.5 rounded-lg border border-white/10 hover:border-cyan text-xs transition" onclick="toggleTheme()" title="Toggle High-Contrast Tactical Theme">
+                    <i class="fa-solid fa-circle-half-stroke text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tier 2: Dedicated Segmented Navigation Tabs Bar with ample breathing room -->
+        <div class="nav-container-tabs flex items-center justify-center">
+            <div class="nav-mode-tabs flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-xl border border-white/10 shadow-inner">
+                <button class="nav-tab active" id="tabExec" onclick="switchTab('exec')"><i class="fa-solid fa-chart-pie"></i> 1. Overview & Advice</button>
+                <button class="nav-tab" id="tabReserve" onclick="switchTab('reserve')"><i class="fa-solid fa-map-location-dot"></i> 2. Reserve Map & Pit Layers</button>
+                <button class="nav-tab" id="tabProduction" onclick="switchTab('production')"><i class="fa-solid fa-industry"></i> 3. Production Forecasts</button>
+                <button class="nav-tab" id="tabSimulator" onclick="switchTab('simulator')"><i class="fa-solid fa-sliders"></i> 4. What-If Simulator</button>
+                <button class="nav-tab" id="tabRecommendations" onclick="switchTab('recommendations')"><i class="fa-solid fa-list-check"></i> 5. Action Plan</button>
+                <button class="nav-tab" id="tabHealth" onclick="switchTab('health')"><i class="fa-solid fa-notes-medical"></i> 6. System & Data Health</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- PREDICTIVE EARLY WARNING BANNER (Dismissible & Humanized) -->
+    <div class="early-warning-banner glass-panel" id="earlyWarningBanner">
+        <div class="early-warning-inner">
+            <div class="early-warning-left">
+                <div class="warning-icon-box"><i class="fa-solid fa-bell text-amber text-lg"></i></div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="badge badge-warning text-3xs">⚡ Heads-Up Notice</span>
+                        <span class="text-xs text-amber font-bold" id="ewLeadTime">7-Day Planning Window</span>
+                    </div>
+                    <h4 class="text-xs font-semibold text-gray-200" style="margin-top: 2px;" id="ewText">
+                        Pit-2 South Bench needs attention — estimated shortfall risk is <span class="text-red-400 font-bold" id="ewProb">82%</span> without prompt drainage.
+                    </h4>
+                </div>
+            </div>
+            <div class="early-warning-right">
+                <div style="text-align: right;">
+                    <span class="text-3xs text-gray-400 block font-bold" style="font-size: 10px;">Suggested Fix</span>
+                    <span class="text-xs font-bold text-emerald" id="ewWindow">Start Dewatering Pump #3</span>
+                </div>
+                <button onclick="document.getElementById('earlyWarningBanner').style.display='none'" class="text-gray-400 hover:text-white p-1 rounded transition" title="Dismiss Banner" style="background: none; border: none; cursor: pointer; color: #94a3b8; padding: 4px 8px;">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <main class="main-container">
+
+        <!-- ===================================================================
+             1. EXECUTIVE DASHBOARD VIEW
+             =================================================================== -->
+        <section id="viewExec" class="view-section active">
+            
+            <!-- Executive KPI Stats Grid (Immediate High-Level Metrics) -->
+            <div class="kpi-grid mb-6">
+                
+                <!-- KPI 1: Mine Health Score -->
+                <div class="kpi-card glass-panel border-glow">
+                    <div class="kpi-icon icon-emerald"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">Mine Health Score</span>
+                        <h2 class="kpi-value" id="statHealth">78 <span class="unit">/ 100</span></h2>
+                        <span class="badge badge-warning" id="statHealthBadge">STEADY STATUS</span>
+                        <span class="kpi-sub text-emerald mt-1"><i class="fa-solid fa-circle-check"></i> Overall operations steady & healthy</span>
+                    </div>
+                </div>
+
+                <!-- KPI 2: Estimated Ore Potential -->
+                <div class="kpi-card glass-panel border-glow">
+                    <div class="kpi-icon icon-cyan"><i class="fa-solid fa-cubes"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">Estimated Manganese In Ground</span>
+                        <h2 class="kpi-value" id="statReserve">83.11M <span class="unit">MT</span></h2>
+                        <span class="kpi-sub text-emerald"><i class="fa-solid fa-chart-line"></i> Verified by satellite scans & drill core assays</span>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Shortfall Risk Level -->
+                <div class="kpi-card glass-panel border-glow">
+                    <div class="kpi-icon icon-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">Expected Shortfall Risk</span>
+                        <h2 class="kpi-value" id="statRisk">18.5% <span class="unit">Shortfall</span></h2>
+                        <span class="badge badge-warning" id="statRiskBadge">MODERATE RISK</span>
+                        <span class="kpi-sub text-amber mt-1"><i class="fa-solid fa-clock"></i> Can be avoided with quick fleet shift</span>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Forecast Model Reliability -->
+                <div class="kpi-card glass-panel border-glow">
+                    <div class="kpi-icon icon-purple"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="kpi-data">
+                        <span class="kpi-label">Prediction Confidence</span>
+                        <h2 class="kpi-value" id="statR2">0.96 <span class="unit">R²</span></h2>
+                        <span class="kpi-sub text-purple" id="statR2Sub"><i class="fa-solid fa-microchip"></i> 96% confidence across active Balaghat benches</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- PRESCRIPTIVE INTELLIGENCE EXECUTIVE REASONING SUITE -->
+            <div class="prescriptive-hero-suite glass-panel p-5 mb-6 border border-cyan-500/40 shadow-2xl relative overflow-hidden bg-gradient-to-r from-slate-900 via-cyan-950/20 to-slate-900 rounded-xl">
+                <div class="card-header border-b border-cyan-500/20 pb-3 mb-4 flex flex-wrap justify-between items-center gap-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-cyan-500/20 border border-cyan-500/40 text-cyan flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-brain-circuit"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                Daily Operations & Exploration Advice
+                                <span class="badge badge-cyan text-2xs uppercase">Decision Assistant</span>
+                            </h3>
+                            <p class="text-xs text-gray-300">Plain-language guidance combining satellite scans, drill core samples, and active pit operations.</p>
+                        </div>
+                    </div>
+                    <span class="badge badge-success text-xs font-mono"><i class="fa-solid fa-circle-check"></i> 4 KEY QUESTIONS ANSWERED</span>
+                </div>
+
+                <!-- The 4 Fundamental Questions Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="prescriptiveQuestionsGrid">
+                    
+                    <!-- 1. What is happening? -->
+                    <div class="p-4 bg-slate-900/80 rounded-lg border border-cyan-500/20 hover:border-cyan-500/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xs font-extrabold text-cyan uppercase tracking-wider"><i class="fa-solid fa-circle-question"></i> 1. What is happening?</span>
+                            <span class="badge badge-cyan text-3xs">CURRENT SITUATION</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white mb-2" id="piQ1Title">Rain Runoff at Pit-2 & New Ore at Zone B</h4>
+                        <p class="text-2xs text-gray-300 leading-relaxed" id="piQ1Desc">Balaghat Pit-2 is seeing early monsoon runoff (14.5 mm/hr) slowing truck turnaround, while Zone B17 shows an intense manganese discovery signal (88.4%).</p>
+                    </div>
+
+                    <!-- 2. Why is it happening? -->
+                    <div class="p-4 bg-slate-900/80 rounded-lg border border-amber-500/20 hover:border-amber-500/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xs font-extrabold text-amber uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass-chart"></i> 2. Why is it happening?</span>
+                            <span class="badge badge-warning text-3xs">WHY THIS HAPPENED</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white mb-2" id="piQ2Title">Shallow Mineral Bedding & Slippery Ramps</h4>
+                        <p class="text-2xs text-gray-300 leading-relaxed" id="piQ2Desc">Sentinel-2 infrared mineral ratios confirm shallow manganese bedding, while rain on haul ramps coupled with 3 dumpers under maintenance created a cycle bottleneck.</p>
+                    </div>
+
+                    <!-- 3. What will happen next? -->
+                    <div class="p-4 bg-slate-900/80 rounded-lg border border-purple-500/20 hover:border-purple-500/50 transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xs font-extrabold text-purple-400 uppercase tracking-wider"><i class="fa-solid fa-forward"></i> 3. What will happen next?</span>
+                            <span class="badge badge-purple text-3xs">WHAT TO EXPECT</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white mb-2" id="piQ3Title">18.5% Shortfall Risk vs +4.2M MT Opportunity</h4>
+                        <p class="text-2xs text-gray-300 leading-relaxed" id="piQ3Desc">Without quick adjustments, monthly output faces a 17,390 MT shortfall. On the positive side, drilling Zone B17 can prove an extra 4.2M MT of high-grade reserve.</p>
+                    </div>
+
+                    <!-- 4. What should the mine do? -->
+                    <div class="p-4 bg-slate-900/80 rounded-lg border border-emerald-500/30 hover:border-emerald-500/60 transition bg-emerald-950/10">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xs font-extrabold text-emerald uppercase tracking-wider"><i class="fa-solid fa-bullseye"></i> 4. What should the mine do?</span>
+                            <span class="badge badge-success text-3xs">RECOMMENDED STEPS</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-white mb-1" id="piQ4Title">Recommended Action Plan</h4>
+                        <ul class="text-2xs text-gray-300 space-y-1 mt-1 font-sans" id="piQ4List">
+                            <li class="flex items-center gap-1.5 text-emerald"><i class="fa-solid fa-check text-3xs"></i> <strong>Drill:</strong> Send Rig #2 to Zone B17 (4 core holes, 75m)</li>
+                            <li class="flex items-center gap-1.5 text-cyan"><i class="fa-solid fa-check text-3xs"></i> <strong>Fleet:</strong> Shift 4 dumpers to Pit-1 active ore face</li>
+                            <li class="flex items-center gap-1.5 text-amber"><i class="fa-solid fa-check text-3xs"></i> <strong>Drainage:</strong> Start pumps #3 & #4 at South Basin</li>
+                            <li class="flex items-center gap-1.5 text-purple-300"><i class="fa-solid fa-check text-3xs"></i> <strong>Blasting:</strong> Use water-resistant emulsion charges</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="exec-secondary-grid">
+                
+                <!-- Protected Production Overview Card -->
+                <div class="glass-panel p-5 border border-emerald-500/30">
+                    <div class="card-header border-b pb-3 mb-4 flex items-center justify-between" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 15px; font-weight: 700;"><i class="fa-solid fa-shield-halved text-emerald"></i> Protected Manganese Output</h3>
+                        <span class="badge badge-success">SAFE PRODUCTION</span>
+                    </div>
+                    <div class="yield-metrics-grid">
+                        <div class="yield-stat-box">
+                            <span class="text-xs text-gray-400 block font-bold" style="font-size: 11px; display: block;">BASELINE YIELD</span>
+                            <span class="text-red-400 font-bold" style="font-size: 20px; font-weight: 800; color: #f87171;">84,500 MT</span>
+                        </div>
+                        <div class="yield-stat-box">
+                            <span class="text-xs text-gray-400 block font-bold" style="font-size: 11px; display: block;">OPTIMIZED YIELD</span>
+                            <span class="text-emerald font-bold" style="font-size: 20px; font-weight: 800; color: #10b981;">92,000 MT</span>
+                        </div>
+                        <div class="yield-stat-box" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3);">
+                            <span class="text-xs text-emerald block font-bold" style="font-size: 11px; display: block; color: #10b981;">PROTECTED TONNAGE</span>
+                            <span class="text-emerald font-bold" style="font-size: 22px; font-weight: 800; color: #10b981;">+7,500 MT</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-300" style="font-size: 12px; line-height: 1.5; color: #cbd5e1;">
+                        By reassigning haul trucks and running pit pumps early, the mine protects an estimated <strong>+7,500 MT</strong> of manganese ore before rains disrupt pit haulage.
+                    </p>
+                </div>
+
+                <!-- Unified Mine Health Score Breakdown -->
+                <div class="glass-panel p-5 border border-cyan-500/30">
+                    <div class="card-header border-b pb-3 mb-4 flex items-center justify-between">
+                        <h3><i class="fa-solid fa-heart-pulse text-cyan"></i> Mine Health Score Components</h3>
+                        <span class="badge badge-warning">78 / 100 STEADY</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-300">Ore Reserve Strength</span>
+                                <span class="font-bold text-emerald">86 / 100</span>
+                            </div>
+                            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald" style="width: 86%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-300">Production Flow Stability</span>
+                                <span class="font-bold text-amber">71 / 100</span>
+                            </div>
+                            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-amber" style="width: 71%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-300">Machinery & Fleet Availability</span>
+                                <span class="font-bold text-amber">69 / 100</span>
+                            </div>
+                            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-amber" style="width: 69%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-300">Weather & Drainage Readiness</span>
+                                <span class="font-bold text-emerald">82 / 100</span>
+                            </div>
+                            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-emerald" style="width: 82%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ===================================================================
+             2. RESERVE INTELLIGENCE VIEW (GIS MAP & PROSPECTIVITY)
+             =================================================================== -->
+        <section id="viewReserve" class="view-section">
+            
+            <!-- Sector Selection & Map Search Toolbar -->
+            <div class="map-nav-toolbar glass-panel p-3 mb-3 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <label for="zoneSelect" class="text-xs text-gray-400 font-bold uppercase"><i class="fa-solid fa-draw-polygon text-cyan"></i> Mining Sector:</label>
+                    <select id="zoneSelect" class="bg-slate-800 text-xs text-gray-200 border border-white/15 rounded px-2.5 py-1.5 font-semibold focus:outline-none focus:border-cyan" onchange="zoomToZone(this.value)">
+                        <option value="all">🌐 All Sectors (Balaghat Belt)</option>
+                        <option value="zoneA">📍 Zone A: Balaghat Main Pit (Active Open Cast)</option>
+                        <option value="zoneB">📍 Zone B: East Exploration Block (Priority Target #1)</option>
+                        <option value="zoneC">📍 Zone C: South Extension Bench (Monsoon Basin)</option>
+                        <option value="zoneD">📍 Zone D: North Underground Prospect (Deep Ore Deposit)</option>
+                    </select>
+                    <button class="btn-xs bg-cyan-500/20 text-cyan hover:bg-cyan-500/30 border border-cyan-500/30 px-3 py-1.5 rounded text-xs font-bold transition-all flex items-center gap-1.5" onclick="exportActiveZoneData()">
+                        <i class="fa-solid fa-download"></i> Export Sector Data (CSV)
+                    </button>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="relative">
+                        <input type="text" id="mapSearchInput" class="bg-slate-800 text-xs text-gray-200 border border-white/15 rounded-full pl-8 pr-3 py-1.5 focus:outline-none focus:border-cyan w-64 shadow-inner" placeholder="Search Zone, Core Assay (BH-042), or Coord..." onkeyup="searchMap(this.value)">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-xs text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Closed-Loop AI Data Pipeline Banner -->
+            <div class="glass-panel p-3 mb-4 border border-cyan-500/30 flex flex-wrap items-center justify-between text-2xs font-mono text-gray-300 gap-2" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="flex items-center gap-1.5 overflow-x-auto py-1 shrink-0" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="px-2 py-1 bg-cyan-500/10 text-cyan rounded border border-cyan-500/30 font-bold"><i class="fa-solid fa-satellite"></i> Satellite</span>
+                    <i class="fa-solid fa-arrow-right text-gray-500 text-[10px]"></i>
+                    <span class="px-2 py-1 bg-emerald-500/10 text-emerald rounded border border-emerald-500/30 font-bold"><i class="fa-solid fa-cloud-sun-rain"></i> Weather</span>
+                    <i class="fa-solid fa-arrow-right text-gray-500 text-[10px]"></i>
+                    <span class="px-2 py-1 bg-amber-500/10 text-amber rounded border border-amber-500/30 font-bold"><i class="fa-solid fa-bore-hole"></i> Boreholes</span>
+                    <i class="fa-solid fa-arrow-right text-gray-500 text-[10px]"></i>
+                    <span class="px-2 py-1 bg-purple-500/10 text-purple rounded border border-purple-500/30 font-bold"><i class="fa-solid fa-database"></i> SQLite DB</span>
+                    <i class="fa-solid fa-arrow-right text-gray-500 text-[10px]"></i>
+                    <span class="px-2 py-1 bg-rose-500/10 text-rose-400 rounded border border-rose-500/30 font-bold"><i class="fa-solid fa-brain"></i> AI Engine</span>
+                    <i class="fa-solid fa-arrow-right text-gray-500 text-[10px]"></i>
+                    <span class="px-2 py-1 bg-emerald-500/20 text-emerald rounded border border-emerald-500/40 font-bold"><i class="fa-solid fa-map-location-dot"></i> GIS Map (1,764 Cells)</span>
+                </div>
+                <div class="flex items-center gap-2 shrink-0" style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn btn-sm btn-cyan flex items-center gap-1.5 text-xs py-1" onclick="recalculateAIPredictionsLive()"><i class="fa-solid fa-rotate text-cyan"></i> Refresh Predictions</button>
+                    <button class="btn btn-sm btn-emerald flex items-center gap-1.5 text-xs py-1" onclick="openIngestModal()"><i class="fa-solid fa-plus text-emerald"></i> Add Drill Sample</button>
+                </div>
+            </div>
+
+            <div class="map-layout-grid">
+                
+                <!-- GIS Map Container -->
+                <div class="map-container glass-panel shadow-2xl">
+                    
+                    <!-- Map Toolbar Controls -->
+                    <div class="map-toolbar flex-wrap">
+                        <div class="layer-pills">
+                            <span class="toolbar-title"><i class="fa-solid fa-layer-group"></i> Map Views:</span>
+                            <button class="layer-pill active" onclick="setMapLayer('prob')">🔴 Ore Probability</button>
+                            <button class="layer-pill" onclick="setMapLayer('exploration')">🎯 Best Drill Spots</button>
+                            <button class="layer-pill" onclick="setMapLayer('confidence')">🧠 AI Confidence</button>
+                            <button class="layer-pill" onclick="setMapLayer('sentinel_rgb')">🛰️ Natural Color</button>
+                            <button class="layer-pill" onclick="setMapLayer('sentinel_false')">🌿 Infrared (Vegetation)</button>
+                            <button class="layer-pill" onclick="setMapLayer('ndvi')">🍃 Plant Density (NDVI)</button>
+                            <button class="layer-pill" onclick="setMapLayer('ndwi')">🌊 Water Index (NDWI)</button>
+                            <button class="layer-pill" onclick="setMapLayer('swir_ratio')">⛰️ Mineral Ratio (SWIR)</button>
+                            <button class="layer-pill" onclick="setMapLayer('lst')">🌡️ Surface Temp</button>
+                            <button class="layer-pill" onclick="setMapLayer('moisture')">💧 Soil Moisture</button>
+                            <button class="layer-pill" onclick="setMapLayer('alteration')">🪨 Rock Alteration</button>
+                            <button class="layer-pill" onclick="setMapLayer('prod_risk')">⚠️ Pit Delay Risk</button>
+                            <button class="layer-pill" onclick="setMapLayer('equip_risk')">🚜 Truck Bottleneck</button>
+                            <button class="layer-pill" onclick="setMapLayer('blast_risk')">💥 Blasting Delay Risk</button>
+                        </div>
+
+                        <!-- Probability Filter Slider -->
+                        <div class="prob-filter-box">
+                            <label for="probSlider">Prospectivity Threshold: <span id="probSliderVal" class="text-cyan font-bold">> 40%</span></label>
+                            <input type="range" id="probSlider" min="0" max="95" value="40" step="5" oninput="updateProbFilter(this.value)">
+                        </div>
+                    </div>
+
+                    <!-- Leaflet Map Div -->
+                    <div id="map" class="map-canvas"></div>
+
+                    <!-- Map Lat/Lng Cursor & Sector Status Bar -->
+                    <div id="mapCoordsBar" class="map-coords-bar flex items-center justify-between text-2xs text-gray-400 px-4 py-1.5 bg-slate-950/90 border-t border-white/10 font-mono">
+                        <div class="flex items-center gap-4">
+                            <span><i class="fa-solid fa-location-crosshairs text-cyan"></i> Lat: <strong id="lblLat" class="text-gray-200">21.8021° N</strong></span>
+                            <span>Lng: <strong id="lblLng" class="text-gray-200">80.1847° E</strong></span>
+                            <span>Zoom: <strong id="lblZoom" class="text-gray-200">13</strong></span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span>Active Sector: <strong id="lblActiveZone" class="text-cyan font-bold">All Sectors</strong></span>
+                            <span><i class="fa-solid fa-satellite text-emerald"></i> Live GIS Raster Stream: <strong class="text-emerald">ACTIVE</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Satellite Scene Metadata Overlay Card -->
+                    <div class="satellite-meta-card shadow-lg p-2.5 bg-slate-950/90 border border-white/10 rounded-lg text-2xs text-gray-300 space-y-1 font-mono" id="satMetaCard">
+                        <div class="flex items-center justify-between border-b border-white/10 pb-1">
+                            <span class="font-bold text-cyan flex items-center gap-1.5"><i class="fa-solid fa-satellite text-emerald"></i> SATELLITE SCENE METADATA</span>
+                            <span class="badge badge-success text-[9px] px-1.5 py-0.5">ESA / USGS WMS</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-0.5">
+                            <div>Source: <strong class="text-gray-200" id="satSource">Sentinel-2A & Landsat-9</strong></div>
+                            <div>Acquisition: <strong class="text-emerald" id="satAcquired">2026-09-08 05:16 UTC</strong></div>
+                            <div>Scene ID: <strong class="text-purple" id="satSceneId">S2A_MSIL2A_20260901</strong></div>
+                            <div>Resolution: <strong class="text-cyan">10m / 30m Multispectral</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Map Legend -->
+                    <div class="map-legend shadow-lg" id="mapLegendBox">
+                        <span class="legend-title" id="legendTitle">Ore Prospectivity Rating</span>
+                        <div class="legend-bar" id="legendBar"></div>
+                        <div class="legend-labels" id="legendLabels">
+                            <span id="legendMin">0% (Low)</span>
+                            <span id="legendMid">50% (Moderate)</span>
+                            <span id="legendMax">100% (High)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side Reserve Analytics Panel -->
+                <div class="map-sidebar">
+                    
+                    <!-- Live Point Inspector Card -->
+                    <div class="inspector-card glass-panel shadow-lg mb-4" id="inspectorCard">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-crosshairs text-cyan"></i> Live Spatial Point Inspector</h3>
+                            <span class="badge badge-info">Hover / Click Map</span>
+                        </div>
+                        <div class="card-body" id="inspectorContent">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Core Assay Validation Card -->
+                    <div class="inspector-card glass-panel shadow-lg mb-4">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-bore-hole text-emerald"></i> Core Assay Validation</h3>
+                            <span class="badge badge-success">GEOLOGICAL LOG</span>
+                        </div>
+                        <div class="card-body p-3 text-xs space-y-2">
+                            <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                                <span class="text-gray-400">Nearest Core Assay:</span>
+                                <span class="font-bold text-gray-200">BH-MOIL-042</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                                <span class="text-gray-400">Assay Mn Grade:</span>
+                                <span class="font-bold text-emerald" id="dhValActual">38.7%</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                                <span class="text-gray-400">Drillhole Core Depth:</span>
+                                <span class="font-bold text-purple" id="dhDepthActual">42m</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-white/10 pb-1.5">
+                                <span class="text-gray-400">Model vs Assay Variance:</span>
+                                <span class="font-bold text-cyan" id="dhDiffVal">+0.5% (High Accuracy)</span>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <span class="badge badge-success" id="dhStatusBadge">✓ VALIDATED WITH DRILL LOG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Priority Drilling Target Card -->
+                    <div class="inspector-card glass-panel shadow-lg mb-4">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-compass text-amber"></i> Priority Drilling Target</h3>
+                            <span class="badge badge-warning">EXPLORATION</span>
+                        </div>
+                        <div class="card-body p-3 text-xs">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-bold text-gray-200 text-sm">Zone B17 (Balaghat East)</span>
+                                <span class="badge badge-danger">TARGET #1</span>
+                            </div>
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Prospectivity Rating:</span>
+                                    <strong class="text-cyan">91%</strong>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Model Confidence:</span>
+                                    <strong class="text-emerald">88%</strong>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-400">Nearest Core Assay Distance:</span>
+                                    <strong class="text-purple" id="expDist">420m (Undrilled Anomaly)</strong>
+                                </div>
+                                <div class="mt-2 p-2 bg-amber-500/10 border border-amber-500/30 rounded text-amber-300 font-bold text-center" id="expRecText">
+                                    🎯 HIGH PRIORITY FOR FURTHER DRILLING
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Geological Resource Drivers Card -->
+                    <div class="xai-card glass-panel shadow-lg" id="xaiResourceCard">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-chart-column text-purple"></i> Geological Resource Drivers</h3>
+                            <span class="badge badge-info">FEATURE WEIGHTS</span>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="xai-title">KEY PROSPECTIVITY DRIVERS</h4>
+                            <div class="xai-bars-container">
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>SWIR Mineral Ratio (B12/B11)</span> <span class="font-bold text-cyan">38%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-cyan" style="width: 38%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Soil Moisture Saturation</span> <span class="font-bold text-emerald">22%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-emerald" style="width: 22%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Land Surface Temp (LST)</span> <span class="font-bold text-amber">18%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-amber" style="width: 18%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Overburden Core Depth</span> <span class="font-bold text-purple">12%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-purple" style="width: 12%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Proximity & Lithology Factors</span> <span class="font-bold text-gray-400">10%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-gray-500" style="width: 10%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             3. PRODUCTION INTELLIGENCE VIEW (FORECASTS & SHORTFALLS)
+             =================================================================== -->
+        <section id="viewProduction" class="view-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Panel: Historical Horizon Controls & Yield Forecast Chart -->
+                <div class="space-y-6">
+                    
+                    <!-- Multi-Horizon Historical Analysis Selector Bar -->
+                    <div class="glass-panel p-3 border border-white/10 rounded-lg flex flex-wrap items-center justify-between gap-3 shadow-md">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock-rotate-left text-cyan"></i> Historical Horizon:
+                            </span>
+                            <div class="horizon-pill-group flex gap-1 bg-slate-900 p-1 rounded-lg border border-white/10" id="horizonPills">
+                                <button class="horizon-btn px-2.5 py-1 text-2xs font-bold rounded text-gray-400 hover:text-white transition" onclick="setHistoricalPeriod('7d')">7D</button>
+                                <button class="horizon-btn active px-2.5 py-1 text-2xs font-bold rounded bg-cyan-600 text-white transition" onclick="setHistoricalPeriod('30d')">30D</button>
+                                <button class="horizon-btn px-2.5 py-1 text-2xs font-bold rounded text-gray-400 hover:text-white transition" onclick="setHistoricalPeriod('3m')">3M</button>
+                                <button class="horizon-btn px-2.5 py-1 text-2xs font-bold rounded text-gray-400 hover:text-white transition" onclick="setHistoricalPeriod('6m')">6M</button>
+                                <button class="horizon-btn px-2.5 py-1 text-2xs font-bold rounded text-gray-400 hover:text-white transition" onclick="setHistoricalPeriod('1y')">1Y</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-2xs" id="historyComparisonDeltas">
+                            <span class="badge badge-success" id="deltaProd">+5.2% vs prev period</span>
+                            <span class="badge badge-cyan" id="deltaFleet">+6.5% fleet turnaround</span>
+                        </div>
+                    </div>
+
+                    <!-- 6-Month Strategic Yield Forecast Chart -->
+                    <div class="chart-card glass-panel shadow-lg">
+                        <div class="card-header border-b flex justify-between items-center">
+                            <h3><i class="fa-solid fa-chart-line text-emerald"></i> Production Yield & Extraction Trends</h3>
+                            <span class="badge badge-info" id="chartHorizonBadge">30-DAY HORIZON</span>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="yieldChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- ADVANCED EQUIPMENT FLEET DISPATCH OPTIMIZATION BOARD -->
+                    <div class="dispatch-card glass-panel shadow-lg p-4 border border-purple-500/30">
+                        <div class="card-header border-b pb-2 mb-3 flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-truck-ramp-box text-purple-400"></i> Advanced Fleet Dispatch Optimization Board
+                                </h3>
+                                <p class="text-2xs text-gray-400">Automated linear solver matching excavator bucket capacity & dump truck cycle times to active benches</p>
+                            </div>
+                            <span class="badge badge-purple text-2xs font-mono"><i class="fa-solid fa-microchip"></i> OPTIMAL ALLOCATION</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3" id="dispatchGrid">
+                            <!-- Injected by JavaScript -->
+                        </div>
+
+                        <div class="border-t border-white/10 pt-2 flex justify-between items-center text-2xs text-gray-400">
+                            <span><i class="fa-solid fa-warehouse text-amber"></i> <strong>Standby Reserves:</strong> Excavator EX-04, EX-07 | Dump Trucks DT-19, DT-20</span>
+                            <button class="btn btn-xs bg-purple-600/30 text-purple-300 border border-purple-500/40 hover:bg-purple-600/50 rounded px-2 py-1" onclick="fetchEquipmentOptimization()">
+                                <i class="fa-solid fa-arrows-rotate"></i> Re-solve Dispatch
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Shortfall Risk Driver Analysis -->
+                    <div class="xai-card glass-panel shadow-lg" id="xaiShortfallCard">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-triangle-exclamation text-amber"></i> Shortfall Risk Driver Analysis</h3>
+                            <span class="badge badge-warning">RISK DRIVERS</span>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="xai-title">KEY RISK FACTORS IMPACTING PRODUCTION</h4>
+                            <div class="xai-bars-container" id="xaiShortfallBars">
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Equipment Downtime & Maintenance</span> <span class="font-bold text-red-400">42%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-red" style="width: 42%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Monsoon Rainfall & Waterlogging</span> <span class="font-bold text-cyan">24%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-cyan" style="width: 24%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Blasting & Stemming Delays</span> <span class="font-bold text-amber">19%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-amber" style="width: 19%;"></div></div>
+                                </div>
+                                <div class="xai-bar-item">
+                                    <div class="xai-bar-label"><span>Ore Bench Accessibility</span> <span class="font-bold text-purple">15%</span></div>
+                                    <div class="xai-progress-track"><div class="xai-progress-fill bg-purple" style="width: 15%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Panel: 7-Day Operational Forecast Widget -->
+                <div>
+                    
+                    <!-- 7-DAY DAILY OPERATIONAL PLANNING FORECAST WIDGET -->
+                    <div class="op-forecast-card glass-panel shadow-lg mb-6">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-calendar-week text-cyan"></i> Next 7-Day Operational Forecast</h3>
+                            <span class="badge badge-success">DAILY SHIFT PLAN</span>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="forecast-day-list" id="opForecastList">
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5">
+                                    <span class="font-bold text-gray-300">MON</span>
+                                    <span class="text-emerald font-bold">16,200 MT</span>
+                                    <span class="badge badge-success text-2xs">NORMAL</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5">
+                                    <span class="font-bold text-gray-300">TUE</span>
+                                    <span class="text-emerald font-bold">15,800 MT</span>
+                                    <span class="badge badge-success text-2xs">NORMAL</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5 bg-amber-500/10 px-2 rounded">
+                                    <span class="font-bold text-amber">WED</span>
+                                    <span class="text-amber font-bold">13,400 MT</span>
+                                    <span class="badge badge-warning text-2xs">⚠️ RAIN RISK</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5 bg-red-500/10 px-2 rounded">
+                                    <span class="font-bold text-red-400">THU</span>
+                                    <span class="text-red-400 font-bold">12,900 MT</span>
+                                    <span class="badge badge-danger text-2xs">⚠️ FLEET RISK</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5">
+                                    <span class="font-bold text-gray-300">FRI</span>
+                                    <span class="text-emerald font-bold">16,100 MT</span>
+                                    <span class="badge badge-success text-2xs">NORMAL</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5 border-b border-white/5">
+                                    <span class="font-bold text-gray-300">SAT</span>
+                                    <span class="text-emerald font-bold">17,200 MT</span>
+                                    <span class="badge badge-success text-2xs">PEAK YIELD</span>
+                                </div>
+                                <div class="forecast-day-item flex justify-between items-center py-1.5">
+                                    <span class="font-bold text-gray-300">SUN</span>
+                                    <span class="text-emerald font-bold">15,900 MT</span>
+                                    <span class="badge badge-success text-2xs">NORMAL</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Production Confidence Interval & Range Box -->
+                    <div class="confidence-range-card glass-panel p-4 border-purple-500/30">
+                        <div class="flex items-center gap-3">
+                            <div class="icon-box-purple"><i class="fa-solid fa-chart-area text-2xl text-purple"></i></div>
+                            <div>
+                                <span class="text-xs text-gray-400 font-bold uppercase tracking-wider block">Production Prediction Range</span>
+                                <h4 class="text-base font-bold text-gray-200 mt-0.5">
+                                    Range: <span class="text-cyan font-bold" id="predRangeVal">89,700 MT to 95,100 MT</span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             4. SCENARIO SIMULATOR VIEW (DYNAMIC PARAMETER SLIDERS)
+             =================================================================== -->
+        <section id="viewSimulator" class="view-section">
+            
+            <!-- Quick Preset Scenario Trigger Buttons -->
+            <div class="preset-scenario-bar glass-panel p-3 mb-4 flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="preset-label"><i class="fa-solid fa-bolt text-amber"></i> Scenario Presets:</span>
+                    <button class="preset-btn" onclick="applyPresetScenario('monsoon')">⛈️ Heavy Monsoon</button>
+                    <button class="preset-btn" onclick="applyPresetScenario('breakdown')">🚜 Fleet Breakdown</button>
+                    <button class="preset-btn" onclick="applyPresetScenario('heatwave')">🌡️ High Heatwave</button>
+                    <button class="preset-btn" onclick="applyPresetScenario('blasting')">💥 Blasting Delay</button>
+                    <button class="preset-btn btn-reset" onclick="applyPresetScenario('reset')">🔄 Reset Baseline</button>
+                </div>
+                <span class="text-xs text-gray-400 font-mono"><i class="fa-solid fa-brain text-cyan"></i> Optimization Engine: Active</span>
+            </div>
+
+            <div class="sim-grid">
+                
+                <!-- Left Sliders Control Panel -->
+                <div class="sim-sliders-card glass-panel shadow-2xl">
+                    <div class="card-header border-b pb-2 mb-3">
+                        <h3><i class="fa-solid fa-sliders text-cyan"></i> Operational Scenario Controls</h3>
+                        <p class="subtitle">Multi-variable parameters: Climate, Machinery, Fleet & Blasting Operations</p>
+                    </div>
+                    
+                    <div class="sliders-body space-y-4">
+                        
+                        <!-- Group 1: Production Targets -->
+                        <div class="control-subgroup glass-panel p-3 rounded-lg border border-white/5">
+                            <div class="subgroup-title text-xs font-bold text-cyan uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-bullseye"></i> 1. Production Target
+                            </div>
+                            <div class="slider-group mb-1">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simTargetInput" class="text-gray-300 font-semibold"><i class="fa-solid fa-box text-emerald"></i> Target Monthly Ore</label>
+                                    <span class="slider-val font-bold text-emerald" id="valTargetInput">94,000 <span class="unit">MT</span></span>
+                                </div>
+                                <input type="range" id="simTargetInput" min="20000" max="200000" value="94000" step="2000" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Monthly target tonnage demand across Balaghat pits</span>
+                            </div>
+                        </div>
+
+                        <!-- Group 2: Weather Factors -->
+                        <div class="control-subgroup glass-panel p-3 rounded-lg border border-white/5">
+                            <div class="subgroup-title text-xs font-bold text-cyan uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-sun-rain"></i> 2. Weather Factors
+                            </div>
+                            
+                            <!-- Slider 1: Rainfall -->
+                            <div class="slider-group mb-3">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simRain" class="text-gray-300 font-semibold"><i class="fa-solid fa-cloud-showers-heavy text-cyan"></i> Rainfall Intensity</label>
+                                    <span class="slider-val font-bold text-cyan" id="valRain">45.0 <span class="unit">mm/day</span></span>
+                                </div>
+                                <input type="range" id="simRain" min="0" max="250" value="45" step="5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Pit haul road friction factor and sump accumulation</span>
+                            </div>
+
+                            <!-- Slider 2: Temp Variance -->
+                            <div class="slider-group mb-3">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simTemp" class="text-gray-300 font-semibold"><i class="fa-solid fa-temperature-arrow-up text-amber"></i> Temperature Variance</label>
+                                    <span class="slider-val font-bold text-amber" id="valTemp">+1.5 <span class="unit">°C</span></span>
+                                </div>
+                                <input type="range" id="simTemp" min="-2.0" max="6.0" value="1.5" step="0.5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Thermal motor strain on excavators & crusher units</span>
+                            </div>
+
+                            <!-- Slider 3: Soil Moisture -->
+                            <div class="slider-group">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simMoisture" class="text-gray-300 font-semibold"><i class="fa-solid fa-droplet text-blue-400"></i> Soil Moisture Saturation</label>
+                                    <span class="slider-val font-bold text-blue-400" id="valMoisture">40 <span class="unit">%</span></span>
+                                </div>
+                                <input type="range" id="simMoisture" min="10" max="95" value="40" step="5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Bench water saturation and slope stability risk</span>
+                            </div>
+                        </div>
+
+                        <!-- Group 3: Equipment & Fleet -->
+                        <div class="control-subgroup glass-panel p-3 rounded-lg border border-white/5">
+                            <div class="subgroup-title text-xs font-bold text-cyan uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-truck-monster"></i> 3. Equipment & Fleet Operations
+                            </div>
+                            
+                            <!-- Fleet Availability -->
+                            <div class="slider-group mb-3">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simFleetAvail" class="text-gray-300 font-semibold"><i class="fa-solid fa-check-double text-purple-400"></i> Fleet Availability</label>
+                                    <span class="slider-val font-bold text-purple-400" id="valFleetAvail">90 <span class="unit">%</span></span>
+                                </div>
+                                <input type="range" id="simFleetAvail" min="20" max="100" value="90" step="5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Percentage of total haulage fleet ready for deployment</span>
+                            </div>
+
+                            <!-- Equipment Utilization -->
+                            <div class="slider-group mb-3">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simFleet" class="text-gray-300 font-semibold"><i class="fa-solid fa-gauge-high text-cyan"></i> Equipment Utilization</label>
+                                    <span class="slider-val font-bold text-cyan" id="valFleet">85 <span class="unit">%</span></span>
+                                </div>
+                                <input type="range" id="simFleet" min="20" max="100" value="85" step="5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Active machine working hours per shift</span>
+                            </div>
+
+                            <!-- Breakdown Downtime -->
+                            <div class="slider-group">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simBreakdown" class="text-gray-300 font-semibold"><i class="fa-solid fa-wrench text-red-400"></i> Breakdown Downtime</label>
+                                    <span class="slider-val font-bold text-red-400" id="valBreakdown">12 <span class="unit">hrs/wk</span></span>
+                                </div>
+                                <input type="range" id="simBreakdown" min="0" max="72" value="12" step="2" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Unplanned mechanical downtime across excavators & trucks</span>
+                            </div>
+                        </div>
+
+                        <!-- Group 4: Blasting Operations -->
+                        <div class="control-subgroup glass-panel p-3 rounded-lg border border-white/5">
+                            <div class="subgroup-title text-xs font-bold text-cyan uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <i class="fa-solid fa-explosion"></i> 4. Blasting Operations
+                            </div>
+                            
+                            <!-- Blast Delay -->
+                            <div class="slider-group mb-3">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simBlasting" class="text-gray-300 font-semibold"><i class="fa-solid fa-clock text-amber"></i> Blasting Clearance Delay</label>
+                                    <span class="slider-val font-bold text-amber" id="valBlasting">1 <span class="unit">Days</span></span>
+                                </div>
+                                <input type="range" id="simBlasting" min="0" max="7" value="1" step="1" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Bench clearance & moisture stemming delays</span>
+                            </div>
+
+                            <!-- Blast Efficiency -->
+                            <div class="slider-group">
+                                <div class="slider-header flex justify-between text-sm mb-1">
+                                    <label for="simBlastEff" class="text-gray-300 font-semibold"><i class="fa-solid fa-bullseye text-emerald"></i> Blast Efficiency</label>
+                                    <span class="slider-val font-bold text-emerald" id="valBlastEff">85 <span class="unit">%</span></span>
+                                </div>
+                                <input type="range" id="simBlastEff" min="40" max="100" value="85" step="5" oninput="runLiveSimulation()">
+                                <span class="slider-hint text-xs text-gray-400">Rock fragmentation & burden displacement efficiency</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Right Simulation Output Summary -->
+                <div class="sim-results-card glass-panel shadow-2xl flex flex-col justify-between p-4">
+                    <div class="card-header border-b pb-2">
+                        <div class="flex justify-between items-center">
+                            <h3><i class="fa-solid fa-chart-pie text-emerald"></i> Scenario Impact & Decision Optimization</h3>
+                            <span class="badge badge-cyan px-2 py-0.5 text-xs"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Engine v1.4</span>
+                        </div>
+                    </div>
+                    
+                    <div class="results-body space-y-4 my-2">
+                        <!-- Top Summary Metrics Grid -->
+                        <div class="whatif-metrics-grid grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+                            <div class="metric-block glass-panel p-2 rounded">
+                                <span class="metric-label text-xs text-gray-400 block uppercase">Target Ore</span>
+                                <h4 class="metric-val text-lg font-bold text-gray-200" id="simTarget">94,000 MT</h4>
+                            </div>
+                            <div class="metric-block glass-panel p-2 rounded">
+                                <span class="metric-label text-xs text-gray-400 block uppercase">Expected Yield</span>
+                                <h4 class="metric-val text-lg font-bold text-emerald" id="simAfterAi">82,400 MT</h4>
+                            </div>
+                            <div class="metric-block glass-panel p-2 rounded">
+                                <span class="metric-label text-xs text-gray-400 block uppercase">Total Loss</span>
+                                <h4 class="metric-val text-lg font-bold text-red-400" id="simBeforeAi">-11,600 MT</h4>
+                            </div>
+                            <div class="metric-block glass-panel p-2 rounded flex flex-col items-center justify-center">
+                                <span class="metric-label text-xs text-gray-400 block uppercase mb-1">Shortfall Risk</span>
+                                <span class="badge badge-danger text-xs px-2 py-0.5" id="simRiskBadge">CRITICAL RISK</span>
+                            </div>
+                        </div>
+
+                        <!-- Featured Best Decision / Recommended Action Card -->
+                        <div id="bestDecisionCard" class="best-decision-hero-card glass-panel p-4 rounded-xl border border-emerald-500/40 relative overflow-hidden bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-cyan-950/40 shadow-xl">
+                            <div class="flex items-center justify-between border-b border-emerald-500/20 pb-2 mb-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="bg-emerald-500/20 text-emerald p-1.5 rounded-lg border border-emerald-500/30">
+                                        <i class="fa-solid fa-trophy text-lg"></i>
+                                    </span>
+                                    <div>
+                                        <span class="text-xs font-bold text-emerald uppercase tracking-wider block">Recommended Action (Best Decision)</span>
+                                        <h4 class="text-base font-bold text-white" id="bestDecisionTitle">Fleet Utilization & Maintenance Mobilization</h4>
+                                    </div>
+                                </div>
+                                <span class="badge badge-success text-xs font-mono" id="bestDecisionFeasibility">94% Feasible</span>
+                            </div>
+
+                            <p class="text-xs text-gray-300 mb-3" id="bestDecisionAction">Increase fleet utilization from 72% → 84% by reallocating 3 excavators from Pit-4 queue.</p>
+
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-2 text-center pt-2 border-t border-emerald-500/20">
+                                <div class="bg-white/5 p-2 rounded">
+                                    <span class="text-[10px] text-gray-400 uppercase block font-semibold">Expected Gain</span>
+                                    <span class="text-base font-extrabold text-emerald" id="bestDecisionGain">+4,200 MT</span>
+                                </div>
+                                <div class="bg-white/5 p-2 rounded">
+                                    <span class="text-[10px] text-gray-400 uppercase block font-semibold">Risk Reduction</span>
+                                    <span class="text-base font-extrabold text-cyan" id="bestDecisionRisk">-18.0%</span>
+                                </div>
+                                <div class="bg-white/5 p-2 rounded">
+                                    <span class="text-[10px] text-gray-400 uppercase block font-semibold">Shortfall Shift</span>
+                                    <span class="text-base font-extrabold text-amber" id="bestDecisionShortfall">12% → 5%</span>
+                                </div>
+                                <div class="bg-white/5 p-2 rounded">
+                                    <span class="text-[10px] text-gray-400 uppercase block font-semibold">Implementation Cost</span>
+                                    <span class="text-base font-extrabold text-purple-300" id="bestDecisionCost">₹ 45.0 Lakhs</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Decision Comparison Matrix Table -->
+                        <div class="decision-matrix-card glass-panel p-3 rounded-lg border border-white/10">
+                            <div class="flex items-center justify-between mb-2 pb-1 border-b border-white/10">
+                                <h4 class="text-xs font-bold text-cyan uppercase tracking-wider flex items-center gap-2">
+                                    <i class="fa-solid fa-code-compare"></i> Advanced Decision Optimization Matrix
+                                </h4>
+                                <span class="text-[11px] text-gray-400">Current Situation ➔ Decisions ➔ Cost ➔ Production ➔ Risk ➔ Choice</span>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-xs text-left text-gray-300">
+                                    <thead class="text-[11px] text-gray-400 uppercase bg-white/5 border-b border-white/10">
+                                        <tr>
+                                            <th class="p-2">Intervention Decision</th>
+                                            <th class="p-2">Cost (₹)</th>
+                                            <th class="p-2">Gain (+MT)</th>
+                                            <th class="p-2">Risk Red.</th>
+                                            <th class="p-2">Shortfall Shift</th>
+                                            <th class="p-2 text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="decisionMatrixBody" class="divide-y divide-white/5">
+                                        <!-- Injected by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             5. AI RECOMMENDATIONS VIEW (ACTION PRIORITY & MATRIX)
+             =================================================================== -->
+        <section id="viewRecommendations" class="view-section">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Left Panel: Prioritized Action Recommendations -->
+                <div class="glass-panel p-5 border border-cyan-500/30">
+                    <div class="card-header border-b pb-3 mb-4 flex items-center justify-between">
+                        <h3><i class="fa-solid fa-list-ol text-cyan"></i> Action Priority Ranking</h3>
+                        <span class="badge badge-info">WEIGHTED PRIORITY MATRIX</span>
+                    </div>
+                    <div id="simSuggestions" class="suggestions-list">
+                        <!-- Injected by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Right Panel: Action Impact Matrix -->
+                <div class="space-y-6">
+                    
+                    <div class="action-impact-card glass-panel p-5 border border-emerald-500/30">
+                        <div class="card-header border-b pb-3 mb-4 flex items-center justify-between">
+                            <h3><i class="fa-solid fa-chart-line text-emerald"></i> Operational Recovery Matrix</h3>
+                            <span class="badge badge-success">POTENTIAL RECOVERY</span>
+                        </div>
+                        <div class="action-impact-table-container">
+                            <table class="impact-table">
+                                <thead>
+                                    <tr>
+                                        <th>ACTION</th>
+                                        <th>RECOVERY</th>
+                                        <th>RISK REDUCTION</th>
+                                        <th>FEASIBILITY</th>
+                                        <th>IMPLEMENTATION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="impactTableBody">
+                                    <!-- Injected by JavaScript -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="total-row">
+                                        <td colspan="1">TOTAL POTENTIAL RECOVERY</td>
+                                        <td colspan="4" class="text-emerald font-bold text-base" id="totalImpactRecovery">+9,600 MT Ore Recovered</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Real-Time Advisory Cards -->
+                    <div class="advisor-card glass-panel p-5">
+                        <div class="card-header border-b pb-3 mb-4">
+                            <h3><i class="fa-solid fa-list-check text-purple"></i> Field Action Recommendations</h3>
+                        </div>
+                        <div class="card-body" id="liveAdvisoryContainer">
+                            <!-- Injected by JavaScript -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             6. MODEL & DATA HEALTH VIEW (METRICS & RETRAINING)
+             =================================================================== -->
+        <section id="viewHealth" class="view-section">
+            <div class="upload-grid">
+                
+                <!-- Left Panel: Data Health Indicator & File Upload Hub -->
+                <div class="space-y-6">
+                    
+                    <!-- DATA HEALTH & QUALITY ASSURANCE WIDGET -->
+                    <div class="data-health-card glass-panel shadow-lg" id="dataHealthCard">
+                        <div class="card-header border-b flex justify-between items-center">
+                            <h3><i class="fa-solid fa-notes-medical text-cyan"></i> Data Stream Health & Assurance</h3>
+                            <span class="badge badge-success" id="overallDataBadge">97% QUALITY</span>
+                        </div>
+                        <div class="card-body p-4">
+                            <div class="space-y-3">
+                                <div class="dh-item">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-gray-300 font-medium"><i class="fa-solid fa-bore-hole text-cyan"></i> Drillhole Core Assays</span>
+                                        <span class="font-bold text-emerald" id="dhVal">98%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald" id="dhBar" style="width: 98%;"></div>
+                                    </div>
+                                </div>
+                                <div class="dh-item">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-gray-300 font-medium"><i class="fa-solid fa-industry text-purple"></i> Production Operational Logs</span>
+                                        <span class="font-bold text-emerald" id="prodVal">100%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald" id="prodBar" style="width: 100%;"></div>
+                                    </div>
+                                </div>
+                                <div class="dh-item">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-gray-300 font-medium"><i class="fa-solid fa-cloud-sun-rain text-amber"></i> Weather Station Feed</span>
+                                        <span class="font-bold text-emerald" id="weatherVal">96%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div class="h-full bg-emerald" id="weatherBar" style="width: 96%;"></div>
+                                    </div>
+                                </div>
+                                <div class="dh-item">
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-gray-300 font-medium"><i class="fa-solid fa-satellite text-blue-400"></i> Satellite Imagery Streams</span>
+                                        <span class="font-bold text-cyan" id="satVal">94%</span>
+                                    </div>
+                                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <div class="h-full bg-cyan" id="satBar" style="width: 94%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="border-t border-white/10 pt-3 mt-2 flex justify-between items-center">
+                                    <span class="text-xs font-bold text-gray-200">Overall Data Stream Quality</span>
+                                    <span class="text-emerald font-bold text-lg" id="overallVal">97%</span>
+                                </div>
+
+                                <div class="data-alert-box p-2.5 bg-amber-500/10 border border-amber-500/30 rounded flex items-center space-x-2 text-xs text-amber-300 mt-2" id="dataAlertBox">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber"></i>
+                                    <span id="dataAlertText">⚠️ Satellite data missing for 3 zones</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Upload & Retraining Box -->
+                    <div class="glass-panel shadow-2xl upload-box">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-file-csv text-cyan"></i> Import Geological Survey & Core Assay Data</h3>
+                            <p class="subtitle">Upload new borehole core assays or spatial survey logs to calibrate predictive models.</p>
+                        </div>
+
+                        <div class="upload-dropzone" id="dropzone" onclick="triggerFileInput()">
+                            <i class="fa-solid fa-cloud-arrow-up drop-icon text-cyan"></i>
+                            <h4 class="drop-title">Drag & Drop Survey CSV Dataset Here</h4>
+                            <p class="drop-sub">Supports `.csv`, `.geojson`, or `.json` formats with lat, lon, depth, and assay grades.</p>
+                            <button class="btn btn-primary mt-4"><i class="fa-solid fa-folder-open"></i> Browse Files</button>
+                            <input type="file" id="fileInput" accept=".csv,.json" style="display:none;" onchange="handleFileUpload(event)">
+                        </div>
+
+                        <div class="retrain-actions text-center mt-6">
+                            <button class="btn btn-emerald btn-lg" onclick="triggerModelRetrain()">
+                                <i class="fa-solid fa-gears"></i> Calibrate & Retrain Model
+                            </button>
+                            <p id="retrainStatus" class="status-msg mt-2 text-gray-400"></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Panel: Model Evaluation Metrics & Feature Importance -->
+                <div class="space-y-6">
+                    <div class="glass-panel shadow-2xl metrics-card">
+                        <div class="card-header border-b">
+                            <h3><i class="fa-solid fa-chart-pie text-purple"></i> Model Validation Metrics & Feature Weights</h3>
+                        </div>
+                        <div class="card-body p-4" id="metricsContent">
+                            <!-- Dynamic JS Injection -->
+                        </div>
+                    </div>
+
+                    <!-- RELATIONAL DATABASE USER RBAC & SECURITY AUDIT LOGS CARD -->
+                    <div class="glass-panel shadow-2xl p-4 border border-cyan-500/30">
+                        <div class="card-header border-b pb-3 mb-3 flex items-center justify-between">
+                            <h3><i class="fa-solid fa-database text-cyan"></i> Relational DB User Directory & Audit Trail</h3>
+                            <span class="badge badge-success"><i class="fa-solid fa-server"></i> SQL DATABASE ACTIVE</span>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-300 uppercase mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-users text-cyan"></i> Registered RBAC Users
+                                </h4>
+                                <div id="dbUserList" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-gray-300 uppercase mb-2 flex items-center gap-2">
+                                    <i class="fa-solid fa-clock-rotate-left text-purple"></i> Recent Security Audit Logs
+                                </h4>
+                                <div id="dbAuditLogs" class="space-y-1.5 max-h-40 overflow-y-auto pr-1 font-mono text-2xs">
+                                    <!-- Injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- AI MODEL REGISTRY & LIFECYCLE CONSOLE -->
+            <div class="glass-panel shadow-2xl p-6 mt-8 border border-purple-500/30" id="modelRegistryCard">
+                <div class="card-header border-b pb-4 mb-4 flex justify-between items-center flex-wrap gap-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-code-branch text-purple"></i> AI Model Management & Version Lifecycle Console
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Manage production model deployments, inspect cross-validation accuracy, and execute zero-downtime rollbacks.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="badge badge-success text-xs font-mono" id="activeModelBadge"><i class="fa-solid fa-circle text-2xs animate-pulse"></i> ACTIVE: v1.4-PROD</span>
+                        <button class="btn btn-warning text-xs py-1.5 px-3 flex items-center gap-1.5" onclick="rollbackModelVersion()">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Rollback to Previous (v1.3)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 text-gray-400 font-semibold uppercase text-2xs">
+                                <th class="py-2.5 px-3">Model Version</th>
+                                <th class="py-2.5 px-3">Lifecycle Status</th>
+                                <th class="py-2.5 px-3">Algorithm</th>
+                                <th class="py-2.5 px-3 text-right">Samples</th>
+                                <th class="py-2.5 px-3 text-right">R² Score</th>
+                                <th class="py-2.5 px-3 text-right">RMSE</th>
+                                <th class="py-2.5 px-3">Trained Date</th>
+                                <th class="py-2.5 px-3 text-center">Lifecycle Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modelRegistryTableBody" class="divide-y divide-white/5">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AI VS ACTUAL DRILLHOLE GROUND-TRUTH VALIDATION MATRIX -->
+            <div class="glass-panel shadow-2xl p-6 mt-8 border border-cyan-500/30" id="groundTruthCard">
+                <div class="card-header border-b pb-4 mb-4 flex justify-between items-center flex-wrap gap-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-bullseye text-cyan"></i> AI vs Actual Drillhole Ground-Truth Validation Matrix
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Empirical validation of spatial model predictions against verified laboratory borehole core assays.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="badge badge-success font-mono text-xs"><i class="fa-solid fa-check-double"></i> 120 BOREHOLES VALIDATED</span>
+                    </div>
+                </div>
+
+                <!-- Ground-Truth KPI Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-white/10 text-center">
+                        <span class="text-2xs text-gray-400 uppercase block font-semibold">Model Accuracy</span>
+                        <h4 class="text-xl font-bold text-emerald font-mono mt-1" id="gtAccuracy">92.5%</h4>
+                        <span class="text-3xs text-gray-400">Across 120 Cores</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-white/10 text-center">
+                        <span class="text-2xs text-gray-400 uppercase block font-semibold">RMSE Error</span>
+                        <h4 class="text-xl font-bold text-cyan font-mono mt-1" id="gtRmse">1.86%</h4>
+                        <span class="text-3xs text-gray-400">Mn Grade %</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-white/10 text-center">
+                        <span class="text-2xs text-gray-400 uppercase block font-semibold">Mean Abs Error (MAE)</span>
+                        <h4 class="text-xl font-bold text-amber font-mono mt-1" id="gtMae">1.42%</h4>
+                        <span class="text-3xs text-gray-400">Low Variance</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-white/10 text-center">
+                        <span class="text-2xs text-gray-400 uppercase block font-semibold">R² Goodness of Fit</span>
+                        <h4 class="text-xl font-bold text-purple font-mono mt-1" id="gtR2">0.94</h4>
+                        <span class="text-3xs text-gray-400">Strong Correlation</span>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-lg border border-white/10 text-center">
+                        <span class="text-2xs text-gray-400 uppercase block font-semibold">Precision / Recall</span>
+                        <h4 class="text-xl font-bold text-emerald font-mono mt-1">91.2% / 93.8%</h4>
+                        <span class="text-3xs text-gray-400">Ore Bed Classification</span>
+                    </div>
+                </div>
+
+                <!-- Validation Sample Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 text-gray-400 font-semibold uppercase text-2xs">
+                                <th class="py-2.5 px-3">Borehole ID</th>
+                                <th class="py-2.5 px-3">Pit / Sector</th>
+                                <th class="py-2.5 px-3">Dominant Lithology</th>
+                                <th class="py-2.5 px-3 text-right">Actual Lab Mn (%)</th>
+                                <th class="py-2.5 px-3 text-right">AI Predicted Mn (%)</th>
+                                <th class="py-2.5 px-3 text-right">Abs Error (Δ)</th>
+                                <th class="py-2.5 px-3 text-center">Validation Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="groundTruthTableBody" class="divide-y divide-white/5">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- DETAILED DATA STREAM QUALITY ASSURANCE AUDIT TABLE -->
+            <div class="glass-panel shadow-2xl p-6 mt-8 border border-white/10" id="detailedDataHealthCard">
+                <div class="card-header border-b pb-4 mb-4 flex justify-between items-center flex-wrap gap-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-emerald"></i> Enterprise Multi-Source Data Quality Assurance Audit
+                        </h3>
+                        <p class="text-xs text-gray-400 mt-0.5">Real-time telemetry integrity monitoring across Geological, Operational, Meteorological, and Remote Sensing feeds.</p>
+                    </div>
+                    <span class="badge badge-success text-xs"><i class="fa-solid fa-server"></i> 4 STREAMS ONLINE</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 text-gray-400 font-semibold uppercase text-2xs">
+                                <th class="py-2.5 px-3">Data Stream Name</th>
+                                <th class="py-2.5 px-3">Source Engine</th>
+                                <th class="py-2.5 px-3 text-right">Freshness</th>
+                                <th class="py-2.5 px-3 text-right">Completeness</th>
+                                <th class="py-2.5 px-3 text-right">Accuracy</th>
+                                <th class="py-2.5 px-3 text-right">Missing / Dups</th>
+                                <th class="py-2.5 px-3 text-center">Availability</th>
+                                <th class="py-2.5 px-3">Last Ingestion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailedDataHealthBody" class="divide-y divide-white/5">
+                            <!-- Populated dynamically by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Clean Enterprise Footer -->
+    <footer class="app-footer text-center text-xs text-gray-500 py-6 border-t border-white/5 mt-10">
+        <div class="nav-container flex justify-between items-center px-6">
+            <span>MANGAN AI &mdash; MOIL Operational Intelligence & Decision Support System</span>
+            <span>Balaghat Mining Sector &bull; Operations & Planning Division</span>
+        </div>
+    </footer>
+
+    <!-- Ingest Core Assay Data Modal -->
+    <div id="ingestModal" class="modal-overlay hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+        <div class="glass-panel p-6 max-w-lg w-full border border-cyan-500/40 shadow-2xl relative">
+            <button onclick="closeIngestModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 class="text-lg font-bold text-white mb-1 flex items-center gap-2"><i class="fa-solid fa-satellite-dish text-cyan"></i> Ingest Core Assay Data</h3>
+            <p class="text-2xs text-gray-300 mb-4">Ingesting data writes to <code>mangan_ai.db</code>, triggers the closed-loop AI Prediction Engine live, updates spatial grid prospectivity, and refreshes the Live GIS Map.</p>
+            
+            <form id="ingestForm" onsubmit="handleBoreholeIngestSubmit(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="text-gray-300 block mb-1">Borehole Sample ID:</label>
+                    <input type="text" id="ingestBhId" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="BH-MOIL-NEW-088" required>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-300 block mb-1">Latitude (°N):</label>
+                        <input type="number" step="0.0001" id="ingestLat" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="21.8085" required>
+                    </div>
+                    <div>
+                        <label class="text-gray-300 block mb-1">Longitude (°E):</label>
+                        <input type="number" step="0.0001" id="ingestLng" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="80.1895" required>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-gray-300 block mb-1">Mn Grade Assay (%):</label>
+                        <input type="number" step="0.1" id="ingestGrade" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="44.2" required>
+                    </div>
+                    <div>
+                        <label class="text-gray-300 block mb-1">Core Depth (m):</label>
+                        <input type="number" step="0.1" id="ingestDepth" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="52.0" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-gray-300 block mb-1">Lithology / Ore Bed Description:</label>
+                    <input type="text" id="ingestLithology" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="Braunite Horizon with Cryptomelane Replacement">
+                </div>
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeIngestModal()" class="btn btn-secondary text-xs">Cancel</button>
+                    <button type="submit" class="btn btn-cyan text-xs flex items-center gap-1.5"><i class="fa-solid fa-play"></i> Ingest Data & Trigger AI Engine</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ACTIVE ALERTS SLIDE-IN DRAWER -->
+    <div id="alertsBackdrop" class="drawer-backdrop hidden" onclick="toggleAlertsDrawer(false)"></div>
+    <aside id="alertsDrawer" class="alerts-drawer hidden flex flex-col">
+        <div class="p-5 border-b border-white/10 flex items-center justify-between bg-slate-950/60">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/30">
+                    <i class="fa-solid fa-bell animate-pulse text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-white leading-tight">Active Incident & Mine Alerts</h3>
+                    <p class="text-2xs text-gray-400"><span id="drawerAlertCount" class="text-red-400 font-bold">4</span> Unacknowledged Actionable Events</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button class="btn-xs bg-slate-800 text-gray-300 hover:text-white border border-white/10 px-2 py-1 rounded text-2xs" onclick="acknowledgeAllAlerts()">
+                    Ack All
+                </button>
+                <button class="text-gray-400 hover:text-white p-1 rounded transition" onclick="toggleAlertsDrawer(false)">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-4 space-y-3" id="alertsListContainer">
+            <!-- Populated dynamically by JS -->
+        </div>
+
+        <div class="p-3 bg-slate-950 border-t border-white/10 text-center">
+            <p class="text-3xs text-gray-500 font-mono">MOIL Real-time Alerting Engine &bull; Priority Dispatch Protocol Active</p>
+        </div>
+    </aside>
+
+    <!-- USER RBAC AUTH & ROLE SWITCHER MODAL -->
+    <div id="loginModal" class="modal-overlay hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
+        <div class="glass-panel p-6 max-w-xl w-full border border-cyan-500/40 shadow-2xl relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            
+            <div class="flex items-center gap-3 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan flex items-center justify-center border border-cyan-500/30 text-lg">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Enterprise Role Switcher & Access Control</h3>
+                    <p class="text-xs text-gray-400">Select any mining role to test dynamic role-based access permissions (RBAC) instantly.</p>
+                </div>
+            </div>
+
+            <div class="my-4">
+                <label class="text-xs font-bold text-cyan uppercase tracking-wider block mb-2">Switch Operational Role (1-Click Switch):</label>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+                    
+                    <!-- Role: Admin -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('admin', 'Admin (CMD)', 'Admin')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge badge-danger text-3xs font-mono">ALL ACCESS</span>
+                            <i class="fa-solid fa-crown text-amber text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Admin (CMD)</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Model Deploy & Rollback, User Administration, Full Quotas</p>
+                    </div>
+
+                    <!-- Role: Geologist -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('geologist', 'Chief Geologist', 'Geologist')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge badge-success text-3xs font-mono">EXPLORATION</span>
+                            <i class="fa-solid fa-gem text-cyan text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Chief Geologist</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Assay Ingest, Spatial GIS Grid, Geological Exploration</p>
+                    </div>
+
+                    <!-- Role: Mining Engineer -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('mining_engineer', 'Sr. Mining Engineer', 'Mining Engineer')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge text-3xs font-mono bg-amber-500/20 text-amber border border-amber-500/30">OPERATIONS</span>
+                            <i class="fa-solid fa-truck-monster text-amber text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Mining Engineer</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Fleet Dispatch, Excavator Allocation, Blasting Schedule</p>
+                    </div>
+
+                    <!-- Role: Operations Manager -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('operations_manager', 'Operations Manager', 'Operations Manager')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge text-3xs font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30">PLANNING</span>
+                            <i class="fa-solid fa-chart-line text-purple-400 text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Operations Manager</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Production Targets, Simulator Calibration, Shift Quotas</p>
+                    </div>
+
+                    <!-- Role: Analyst -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('analyst', 'Data Analyst', 'Analyst')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge text-3xs font-mono bg-blue-500/20 text-blue-300 border border-blue-500/30">ANALYTICS</span>
+                            <i class="fa-solid fa-magnifying-glass-chart text-blue-400 text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Data Analyst</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Model Accuracy, Validation Matrix, Historical Deltas</p>
+                    </div>
+
+                    <!-- Role: Viewer -->
+                    <div class="role-card p-3 rounded-lg border border-white/10 bg-slate-900/90 hover:border-cyan cursor-pointer transition text-left" onclick="selectRolePreset('viewer', 'Guest Auditor', 'Viewer')">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="badge text-3xs font-mono bg-gray-500/20 text-gray-300 border border-gray-500/30">READ-ONLY</span>
+                            <i class="fa-solid fa-eye text-gray-400 text-xs"></i>
+                        </div>
+                        <h5 class="text-xs font-bold text-white">Viewer (Auditor)</h5>
+                        <p class="text-3xs text-gray-400 mt-0.5">Executive Telemetry Read-Only, High-Level Reports</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom User / Pass Form Option -->
+            <div class="border-t border-white/10 pt-4 mt-2">
+                <details class="text-xs text-gray-400">
+                    <summary class="cursor-pointer hover:text-white font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-lock text-cyan"></i> Or Authenticate via Credentials
+                    </summary>
+                    <form onsubmit="handleLoginFormSubmit(event)" class="space-y-3 mt-3">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="text-gray-300 block mb-1">Username:</label>
+                                <input type="text" id="loginUsername" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="admin" required>
+                            </div>
+                            <div>
+                                <label class="text-gray-300 block mb-1">Password:</label>
+                                <input type="password" id="loginPassword" class="w-full bg-slate-900 border border-white/10 rounded px-3 py-1.5 text-white" value="admin123" required>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-3xs text-gray-500 font-mono">JWT Bearer Auth &bull; 8hr Token Expiry</span>
+                            <button type="submit" class="btn btn-cyan text-xs py-1.5 px-4"><i class="fa-solid fa-right-to-bracket"></i> Authenticate</button>
+                        </div>
+                    </form>
+                </details>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom App Logic -->
+    <script src="app.js?v=20260912_v4"></script>
+</body>
+</html>

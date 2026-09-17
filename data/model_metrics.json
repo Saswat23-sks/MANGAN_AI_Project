@@ -1,0 +1,45 @@
+{
+  "model_type": "Optimized XGBoost + Random Forest Spatial Ensemble (5-Fold Spatial CV)",
+  "sample_count": 120,
+  "outliers_pruned_count": 5,
+  "validation_strategy": "5-Fold Spatial Block Cross-Validation & 60/20/20 Holdout",
+  "train_r2_score": 0.91,
+  "val_r2_score": 0.52,
+  "test_r2_score": 0.75,
+  "grade_r2_score": 0.75,
+  "grade_mae_pct": 2.22,
+  "grade_rmse_pct": 2.76,
+  "spatial_5fold_cv_r2": 0.55,
+  "spatial_5fold_cv_std": 0.31,
+  "best_hyperparameters": {
+    "n_estimators": 120,
+    "max_depth": 5,
+    "min_samples_split": 2,
+    "learning_rate": 0.08,
+    "criterion": "squared_error"
+  },
+  "feature_importances": {
+    "depth_m": 0.0486,
+    "swir1": 0.0378,
+    "swir2": 0.0236,
+    "swir_ratio": 0.0433,
+    "lst_temp_c": 0.0432,
+    "ndvi": 0.7615,
+    "soil_moisture": 0.042
+  },
+  "historical_shortfall_model": {
+    "historical_sample_count": 4380,
+    "validation_strategy": "80/20 Chronological Time-Based Holdout Split",
+    "shortfall_model_r2_score": 0.96,
+    "shortfall_mae_mt": 697,
+    "shortfall_rmse_mt": 1523,
+    "training_period": "3 Years (2023 - 2026 Daily Operations)",
+    "input_features": [
+      "rainfall_mm_day",
+      "temperature_c",
+      "soil_moisture_pct",
+      "fleet_capacity_pct",
+      "blasting_events"
+    ]
+  }
+}
