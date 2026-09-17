@@ -17,10 +17,10 @@
 
 **MANGAN AI** is an enterprise-grade web-based Decision Support & Geospatial Intelligence System designed for **MOIL Limited** and the **Ministry of Steel**. By fusing **Copernicus Sentinel-2 Multi-Spectral satellite remote sensing (SWIR-1 & SWIR-2 alteration bands)** with **borehole core drilling assays**, MANGAN AI predicts manganese ore grade distributions with high spatial precision ($R^2 = 0.75$) and forecasts open-cast pit production shortfalls 3–5 days ahead ($R^2 = 0.96$).
 
-### Key Measurable Outcomes:
-- **₹1.5–₹2.5 Cr Saved per Exploration Block:** Eliminates wasteful blind core drilling by prioritizing high-probability mineral alteration zones.
-- **3,000–7,500 MT Recovered Monthly:** Anticipates monsoon pit disruptions and dynamically reallocates dumpers and shovels to dry upper benches.
-- **UNFC-1997 Compliance:** Directly maps reserve predictions into Indian Bureau of Mines (IBM) G1, G2, and G3 resource confidence categories.
+### 📈 Projected Economic & Operational Impact (ROI Model):
+- **₹1.5–₹2.5 Cr Estimated Savings per Exploration Block:** Reduces non-productive diamond core drilling (saving ₹4,500–₹6,500/meter) by prioritizing high-probability Sentinel-2 SWIR mineral alteration zones.
+- **3,000–7,500 MT Ore Output Recovered Monthly:** Anticipates monsoon pit waterlogging and dynamically diverts dumpers and excavators to dry upper benches, preventing severe quarterly production shortfalls.
+- **UNFC-1997 & IBM Standard Compliance:** Directly maps reserve predictions into Indian Bureau of Mines (IBM) G1 (Measured), G2 (Indicated), and G3 (Inferred) confidence categories.
 
 ---
 
@@ -81,7 +81,7 @@
    - Ranked operational recommendations (e.g., *Start Submersible Pump #3*, *Divert Haul Route to North Ramp*, *Deploy Wet-Grade Tires*) with estimated execution costs and MT ore recovered.
 
 5. **Enterprise Mining RBAC & Security:**
-   - 6 Mining Roles: `CMD / Director`, `General Manager (Mines)`, `Senior Mining Engineer`, `Senior Geologist`, `Pit Supervisor`, and `Safety Officer`.
+   - 6 Mining Roles: Admin (CMD / System Administrator), Geologist (Chief Geologist & GIS Lead), Mining Engineer (Lead Mine & Pit Engineer), Operations Manager (Production & Fleet Dispatch Manager), Analyst (Corporate Planning & Resource Analyst), and Viewer (Observer & Stakeholder).
    - HMAC-SHA256 JWT bearer token authentication with sliding-window session security.
 
 ---
@@ -122,7 +122,6 @@
 ```bash
 git clone https://github.com/Saswat23-sks/MANGAN_AI_Project.git
 cd MANGAN_AI_Project
-
 ```
 
 ### 2. (Optional) Install Dependencies
