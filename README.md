@@ -120,8 +120,9 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/<your-username>/MANGAN-AI.git
-cd MANGAN-AI
+git clone https://github.com/Saswat23-sks/MANGAN_AI_Project.git
+cd MANGAN_AI_Project
+
 ```
 
 ### 2. (Optional) Install Dependencies
